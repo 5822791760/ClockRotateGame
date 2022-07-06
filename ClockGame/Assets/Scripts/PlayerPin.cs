@@ -10,13 +10,16 @@ public class PlayerPin : MonoBehaviour
 
     private int scoreCount = 0;
     private Vector3 middlePivot = new Vector3(0, 0, 0);
-    private bool isGameOver = false;
+    public bool isGameOver = false;
+    private float speed = 60;
 
     private SpawnerControl spawnScript;
     private TextMeshProUGUI text;
 
     [SerializeField] private bool isGoodZone = false;
     [SerializeField] private GameObject redScore;
+    [SerializeField] private AudioSource hitSound;
+    [SerializeField] private AudioSource gamerOverSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,16 +39,19 @@ public class PlayerPin : MonoBehaviour
     {
         if (context.performed && isGoodZone)
         {
+            hitSound.Play();
             revert = !revert;
             Destroy(spawnScript.clone);
             scoreCount++;
             text.SetText(scoreCount.ToString());
             spawnScript.cloneCounter--;
+            speed += 5;
 
         }
         else if (context.performed && !isGoodZone)
         {
             isGameOver = true;
+            gamerOverSound.Play();
         }
     }
 
@@ -53,11 +59,11 @@ public class PlayerPin : MonoBehaviour
     {
         if (!revert && isGameOver == false)
         {
-            transform.RotateAround(new Vector3(0, 0, 0), Vector3.back, 90 * Time.deltaTime);
+            transform.RotateAround(new Vector3(0, 0, 0), Vector3.back, speed * Time.deltaTime);
         }
         if (revert && isGameOver == false)
         {
-            transform.RotateAround(new Vector3(0, 0, 0), Vector3.forward, 90 * Time.deltaTime);
+            transform.RotateAround(new Vector3(0, 0, 0), Vector3.forward, speed * Time.deltaTime);
         }
     }
 
